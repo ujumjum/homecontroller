@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> SMART HOME </title>
+	<!--다양한 크기의 화면을 가진 디바이스에서 동일 비율 출력-->
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" charset = "utf-8">
+	<link rel="stylesheet" href="../static/style.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<style>
+	/* style.css 에서 기술하지 않은 제어 화면 넘기는 둥근 화살표 버튼 */
+	/* 버튼을 a태그로 구현 - 아래 script와 함께 */
+		a{
+			text-decoration:none;
+			font-size:3rem;
+			display:inline-block;
+			float:left;
+			border-radius:50%;
+			padding:0.5rem 1.8rem;
+			background-color:white;
+			color:#769FCD;
+		}	
+		a:hover{
+			background-color:#769FCD;
+			color:white;
+		}	
+	</style>
+</head>
+<body style="text-align:center">
+	<h1 style="background:white; margin:1rem 1rem 0 1rem; padding:10px; text-align:left;color:grey;"> <i class="material-icons">cloud</i> HOME CONTROLLER </h1>
+	<div class="fieldset">
+	<label> <!--자동 모드 선택-->
+		<input role="switch" type="checkbox" id="autoCheck"/>
+		<span id="isAuto" style="color:black;">AUTO</span>
+	</label>
+	<p style="display:block;"> {{time}} </p>
+	</div>
+	<!--온도&습도 수치 & 프로그레스바 표현-->
+	<div class="information">	
+		<div class="temp">
+		<p> Temperature </p>
+		<progress id="temProgress" value={{tem}} min="-10" max="40" style="accent-color:#FF2400; width:80%"></progress>
+		<br> {{tem}} *C </br>
+		</div>
+		<div class="hum">
+		<p> Humidity </p>
+		<progress id="humProgress" value={{hum}} min="0" max="80" style="width:80%"></progress>
+		<br> {{hum}} % </br>
+		</div>
+	</div>
+	<!--불쾌 지수 표시-->
+	<div class="information">
+		<h4 style="margin-right:0.3rem;"> discomfort index : {{ feelIndex }}</h4>
+		<h3 style="color:#769FCD" id="feel">{{ feel }}</h3>
+	</div>
+
+	<!--에어컨 제어와 창문 제어 화면 이동 코드-->
+	<div class="content">
+	<!--a태그 사용, 클릭했을 때 chCard 함수 호출-->
+	<a onclick="chCard(winCard, airCard)" id="preBtn" sytle="margin-left:0.2rem">&#8249;</a>
+	<div class="card" id="airCard">
+	<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpurepng.com%2Fpublic%2Fuploads%2Flarge%2Fpurepng.com-air-conditionerair-conditionerairconditioneracacair-conair-conditioning-1701528309054wofx8.png&f=1&nofb=1&ipt=4eff608891a07c94a0be065b24d58add7566a8e7644f2e335c79a3e0c853d907&ipo=images" style="width:70%; height:auto;">
+	<div class="container">
+	<h2> Air conditioner Control </h2>
+	<p id="isOn">{{isOn}}</p>
+	<!--on/off 버튼 클릭 시 함수 호출-->
+	<div class="Btn"> 
+		<button onclick="aircon_on()"> TURN ON</button>
+		<button onclick="aircon_off()"> TURN OFF</button>
+	</div>
+	</div>
+	</div>
+	<div class="card" id="winCard">
+	<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.ajmqualitywindows.co.uk%2F_webedit%2Fcached-images%2F22-0-261-0-9479-10000-1256.jpg&f=1&nofb=1&ipt=009ea46b552d277acf28bed580babf6c467b24d660673aae5ac1ec4989f8fe8e&ipo=images" style="width:70%;height:auto;">
+	<div class="container">
+	<h2> Window Control </h2>
+	<p id="isOpen">{{isOpen}}</p>
+	<!--open/close 버튼 클릭 시 함수 호출-->
+	<div class="Btn">
+		<button onclick="window_open()">OPEN</button>
+		<button onclick="window_close()">CLOSE</button>
+	</div>
+	</div>
+	</div>
+	<a onclick="chCard(airCard, winCard)" id="nextBtn" sytle="margin-right:0.2rem">&#8250;</a>
+	</div>
+	
+	<script>
+		//자동 모드 확인
+		const checkbox = document.querySelector("#autoCheck");
+		checkbox.addEventListener("change", function() {
+			//불쾌 지수에 따른 기분 정보 읽어오기
+			const feel = document.querySelector("#feel").textContent;
+			console.log(feel);
+			//자동 모드 선택 되었을 때 두 가지 경우만 설정
+  			if (checkbox.checked) {
+     				if (feel === "TERRIBLE!!") { //불쾌지수가 많이 높을 때 : 에어컨 ON, 창문 CLOSE
+     					aircon_on();
+     					window_close();
+     				} else if (feel === "GOOD:)") { //불쾌지수가 낮을 때 : 에어컨 OFF, 창문 OPEN
+     					aircon_off();
+     					window_open();
+     				}
+			//자동 모드 선택 X
+			}else {
+     				document.querySelector("#isAuto").style.color = "#cccccc";
+			}	
+		});
+		
+		//에어컨 ON
+		function aircon_on(){
+			fetch("/aircon/on")
+			.then(response=>response.text())
+			.then(data=>{
+				document.querySelector("#isOn").textContent="ON";	//상태 변경
+				document.querySelector("#isOn").style.color="#769FCD";	//글자 색 변경(파랑)
+			});
+		}
+
+		//에어컨 OFF
+		function aircon_off(){
+			fetch("/aircon/off")
+			.then(response=>response.text())
+			.then(data=>{
+				document.querySelector("#isOn").textContent="OFF"; 	//상태 변경
+				document.querySelector("#isOn").style.color="#FF2400";	//글자 색 변경(빨강)
+			});
+		}
+
+		//창문 OPEN
+		function window_open(){
+			fetch("/window/open")
+			.then(response=>response.text())
+			.then(data=>{
+				document.querySelector("#isOpen").textContent="OPEN";	//상태 변경
+				document.querySelector("#isOpen").style.color="#769FCD";	//글자 색 변경(파랑)
+			});
+		}
+
+		//창문 OFF
+		function window_close(){
+			fetch("/window/close")
+			.then(response=>response.text())
+			.then(data=>{
+				document.querySelector("#isOpen").textContent="CLOSE";	//상태 변경
+				document.querySelector("#isOpen").style.color="#FF2400";	//글자 색 변경(빨강)
+			});
+		}
+
+		//화살표 버튼 눌러서 chCard 호출 => 제어 화면 변경(display 보이고 안보이게 구현)
+		//1.오른쪽 화살표(nextBtn) : 에어컨 화면X, 창문 화면 O 
+		//2.왼쪽 화살표(preBtn) : 에어컨 화면X, 창문 화면 O 
+		function chCard(remove,cardName){
+			remove.style.display="none";
+			cardName.style.display="inline-block";
+		}
+	</script>
+
+</body>
+</html>

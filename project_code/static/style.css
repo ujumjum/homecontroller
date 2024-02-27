@@ -1,0 +1,152 @@
+/* 전체 글꼴 적용 */
+* {
+	font-family:sans-serif;
+}
+
+/* body 부분의 색깔 설정, 가운데 정렬 */
+body{
+	background-color:#F7FBFC;
+	align-items:center;
+}
+
+/* 자동모드를 하기 위한 checkbox와 시간 표시 부분 */
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+/* 자동모드 체크 박스를 토글 모양으로 변환=이 부분은  구글링 통해 다양한 사람들 코드 참조 */
+[type="checkbox"] {
+  appearance: none;
+  position: relative;
+  border: max(2px, 0.1em) solid gray;
+  border-radius: 1.25em;
+  width: 2.25em;
+  height: 1.25em;
+}
+
+/* 선택 전, 선택 후 등의 변화 */
+[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  transform: scale(0.8);
+  background-color: gray;
+  transition: left 250ms linear;
+}
+
+[type="checkbox"]:checked {
+  background-color: tomato;
+  border-color: tomato;
+}
+
+[type="checkbox"]:checked::before {
+  background-color: white;
+  left: 1em;
+}
+
+[type="checkbox"]:focus-visible {
+  outline-offset: max(2px, 0.1em);
+  outline: max(2px, 0.1em) solid tomato;
+}
+
+[type="checkbox"]:enabled:hover {
+  box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+}
+
+
+/* 온도, 습도, 불쾌 지수가 표시되는 부분*/
+.fieldset{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:space-between;
+	align-items:center;
+	flex-direction:row;
+	margin-left:1rem;
+	margin-right:1rem;
+}
+
+/* 온도, 습도 칸*/
+.information{
+	display:flex;
+	flex-wrap:wrap;
+	justify-content:center;
+	align-items:center;
+}
+.information div{
+	background-color:white;
+	display:block;
+	border:0.3rem solid #D6E6F2;
+	flex:1 0 auto;
+	margin:0.3rem;
+}
+
+/* 에어컨과 창문 제어를 하는 카드 부분*/
+.content{
+	display:flex;
+	justify-content:space-around;
+	align-items:center;
+	height:auto; 
+	padding:1rem;
+}
+
+.content.card{
+	flex:1 0 auto;
+}
+
+.card{
+	width:50vw;
+	height:auto;
+	vertical-align:middle;
+	margin:0 0.2rem 0.5rem 0.2rem;
+	padding:1rem;
+	box-shadow:0 2rem 4rem 0 rgba(0, 0, 0, 0.2);
+	transition:0.3s;
+}
+
+.card:hover{
+	box-shadow:0 4rem 8rem 0 rgba(0,0,0,0.2);
+}
+
+/* 양쪽 화살표 클릭 시 화면 전환을 display로 구현, 초기상태 = 에어컨 제어 화면 */
+#airCard{
+	display:inline-block;
+}
+#winCard{
+	display:none;
+}
+
+/* ON, OFF 버튼 있는 div  */
+.Btn{
+	display:flex;
+	margin:0.3rem;
+	justify-content: space-around;
+	flex-direction:row;
+	flex-wrap:wrap;
+}
+
+/* ON , OFF 버튼*/
+button{
+	background-color:#769FCD;
+	padding:1em 2em;
+	margin:0.1rem;
+	border-style:outset;
+	border-radius: 3em;
+	color:#F7FBFC;
+}
+
+/* 작은 화면일 경우 망가짐 방지 */
+@media(max-width:768px){
+	/*adjust for smaller screens*/
+	./card{
+		width:90vw;
+	}
+	.information div{
+		max-width:90vw;
+	}
+}
