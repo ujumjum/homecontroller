@@ -4,12 +4,15 @@
 
 :bulb: IDEA : 에어컨 리모컨이 고장났던 한여름, 라즈베리파이가 주어진 기회를 활용하여 미니 스마트홈을 만들기로 하였습니다.
 
+
 ## 프로젝트 소개
 
 <p align="center">
   <img src="https://github.com/ujumjum/homecontroller/assets/110725131/29950fe8-cbf5-47cb-acce-2d5ba8201216">
 </p>
 
+
 ## 개발 환경
 - Raspberry pi4
 - Flask
+- Python
