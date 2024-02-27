@@ -6,8 +6,9 @@
 
 ## 프로젝트 소개
 
-![개요1](https://github.com/ujumjum/homecontroller/assets/110725131/29950fe8-cbf5-47cb-acce-2d5ba8201216)
-
+<p align="center">
+  <img src="[이미지경로](https://github.com/ujumjum/homecontroller/assets/110725131/29950fe8-cbf5-47cb-acce-2d5ba8201216)">
+</p>
 
 ## 개발 환경
 - Raspberry pi4
