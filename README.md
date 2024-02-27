@@ -7,7 +7,7 @@
 ## 프로젝트 소개
 
 <p align="center">
-  <img src="[https://github.com/ujumjum/homecontroller/assets/110725131/29950fe8-cbf5-47cb-acce-2d5ba8201216]">
+  <img src="https://github.com/ujumjum/homecontroller/assets/110725131/29950fe8-cbf5-47cb-acce-2d5ba8201216">
 </p>
 
 ## 개발 환경
