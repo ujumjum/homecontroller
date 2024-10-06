@@ -1,7 +1,7 @@
 from flask import Flask,render_template         # flask web server
 from irControl import control                   # keyName decode위한 함수 import
 from time import sleep                          # servo motor 움직임 시간
-
+from flask_socketio import SocketIO, emit       # Websocket 사용
 import Adafruit_DHT                             # 온습도 센서 DHT11 사용 위함
 import datetime                                 # 현재 날짜 및 시간 표시
 import RPi.GPIO as GPIO                   
@@ -17,6 +17,7 @@ SERVO_PIN= 32
 
 hum, tem = Adafruit_DHT.read_retry(humSensor, humSensorPin)	#read data and store
 app = Flask(__name__)                                       #app 객체 생성
+socketio = SocketIO(app)                                    #SocketIO 객체 생성
 
 #핀 모드 설정 및 초기화
 GPIO.setmode(GPIO.BOARD)                                    #physical num으로 지정한 이유
@@ -35,6 +36,23 @@ servo_min_duty = 3
 @app.route('/')
 def home():
     return render_template('home.html')
+
+# WebSocket 연결 시 10초마다 데이터 전송
+@socketio.on('connect')
+def handle_connect():
+    while True:
+        hum, tem = Adafruit_DHT.read_retry(humSensor, humSensorPin)
+        if hum is not None and tem is not None:
+            badFeel = (1.8 * tem - 0.55 * (1 - hum) * (1.8 * tem - 26) + 32) / 10.0
+            feel = "TERRIBLE!!" if badFeel > 80 else "BAD" if badFeel > 75 else "NOT GOOD" if badFeel >= 68 else "GOOD:)"
+            sensorData = {
+                'hum': hum,
+                'tem': tem,
+                'feelIndex': int(badFeel),
+                'feel': feel
+            }
+            emit('sensor_data', sensorData)  # 클라이언트로 실시간 데이터 전송
+        sleep(10)
 
 #main page
 @app.route('/inform')
@@ -131,10 +149,9 @@ def window_close():
         GPIO.cleanup(SERVO_PIN)
         pass
 
-#독립적 실행
+#Websocket으로 수정
 if __name__=="__main__":
-    app.run(host
-            ="0.0.0.0", port = "8080")              # network(ip address) 설정한 ip, 포트번호
+    socketio.run(app, host="0.0.0.0", post=8080)
     
 GPIO.cleanup()               #프로그램 종료 시 파이썬 프로그램 내 초기화 했던 핀 설정 초기화
         
