@@ -81,10 +81,28 @@
 	</div>
 	</div>
 	</div>
-	<a onclick="chCard(airCard, winCard)" id="nextBtn" sytle="margin-right:0.2rem">&#8250;</a>
+	<a onclick="chCard(airCard, winCard)" id="nextBtn" style="margin-right:0.2rem">&#8250;</a>
 	</div>
-	
+	    
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
 	<script>
+		// WebSocket으로 10초마다 데이터 전송
+		var socket = io();
+		
+		socket.on('sensor_data', function(data) {
+			Object.keys(data).forEach(key => {
+			    // id있는지 확인 후 값 업데이트
+		            const element = document.getElementById(key);
+		            if (element) {
+		                element.textContent = data[key];
+		            }
+		            const progress = document.getElementById(key + "Progress");
+		            if (progress) {
+		                progress.value = data[key];
+		            }
+			});
+		});
+		
 		//자동 모드 확인
 		const checkbox = document.querySelector("#autoCheck");
 		checkbox.addEventListener("change", function() {
